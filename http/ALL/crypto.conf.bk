@@ -1,0 +1,10 @@
+    upstream backend {
+	server 192.168.1.50;
+    }
+    server {
+	listen 80;
+	server_name crypto.192.168.1.30.nip.io;
+	location / {
+		proxy_pass http://backend;
+	}
+    }	

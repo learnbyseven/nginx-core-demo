@@ -1,0 +1,23 @@
+upstream pool1backend {
+	server 192.168.1.80:8090;
+	server 192.168.1.81:8090;
+	server 192.168.1.82:8090;
+	}
+
+upstream pool2backend {
+        server 192.168.1.90:8091;
+        server 192.168.1.91:8091;
+        server 192.168.1.92:8091;
+        }
+
+server {
+	listen 8095;
+	location / {
+	if ($datagroup1) {
+	 proxy_pass http://pool1backend;
+        	}
+        if ($datagroup2) {
+         proxy_pass http://pool2backend;
+                }
+	}
+}

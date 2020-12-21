@@ -1,0 +1,30 @@
+#PASSIVE HEALTH CHECK monitors transactions 
+#parameters fail_timeout , default 1 attempt and timeout 10s
+#Block Server 192.168.1.30:8095 max_fails=3 fail_timeout=30s;
+#Block Server ; Overwhelmed requests; slow_start example : 192.168.1.30:8095 slow_start=30s;
+#--------------------------------------------------------------------------------------------
+#ACTIVE HEALTH CHECK
+#--------------------------------------------------------------------------------------------
+# Default every 5 seconds NP sends request to "/" to each servers in appServer group
+#--------------------------------------------------------------------------------------------
+upstream appServers {
+	zone appServers 64k;
+	server 192.168.1.30:8095;
+	server 192.168.1.30:8096;
+	}
+	
+server { 
+	location / {
+		proxy_pass http://appServers;
+		status_zone appServers;
+		#health_check;
+		##Custom service port, overridden parameters, custom URIs 
+		#health_check port=8097; 
+		#health_check interval=20 fails=3 passes=2;
+		health_check 
+			uri=/healthz 
+			match=server_ok;
+	}
+}
+
+

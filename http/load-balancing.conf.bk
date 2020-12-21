@@ -1,0 +1,23 @@
+## Load balancing additional algos 1.Least_time 2.Random
+## least_time=header, least_time=last_byte, least_time=last_byte inflight
+## server 192.168.1.30:8091 weight=5;
+
+
+upstream backend {
+    
+    random two least_time=last_byte;
+    server 192.168.1.30:8091; #weight=5;
+    server 192.168.1.30:8092; #weight=5;
+    server 192.168.1.30:8093;
+    server 192.168.1.30:8094;
+    zone backend 64k;
+}
+
+
+server {
+	location / {
+	status_zone backend; 
+	proxy_pass http://backend;
+	}
+}
+

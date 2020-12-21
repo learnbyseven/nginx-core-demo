@@ -1,0 +1,40 @@
+## SESSION PERSISTENT
+## 1.sticky_cookie 2.sticky_route 3.sticky_learn
+## curl -v http://192.168.1.30 
+## curl --cookie 'route=a' http://192.168.1.30
+## curl --cookie 'sessionId=123' http://192.168.1.30
+map $cookie_route $route_cookie {
+    ~(?P<route>\w+)$ $route;
+}
+
+map $arg_route $route_uri {
+    ~(?P<route>\w+)$ $route;
+}
+
+
+    
+upstream sessionServers {
+    ## Sticky_cookie & Sticky_Learn
+    server 192.168.1.30:8091;
+    server 192.168.1.30:8092;
+    ## Sticky_route
+    #server 192.168.1.30:8091 route=a;
+    #server 192.168.1.30:8092 route=b;
+    zone sessionServers 64k;
+    #sticky cookie srv_id expires=1h;
+    #sticky route $route_cookie $route_uri;
+    sticky learn create=$upstream_cookie_sessionId lookup=$cookie_sessionId zone=id:1m;
+}
+
+server {
+	listen 80;
+	location / {
+		proxy_pass http://sessionServers;
+	}
+        access_log  /var/log/nginx/session-test.log  combined;
+        status_zone sessionServers;
+}
+#Upstream server conf;
+#add_header Set-Cookie 'sessionId=123';
+#add_header Set-Cookie 'sessionId=456;
+

@@ -1,0 +1,19 @@
+#DYNAMIC CONFIGURATION
+#curl -X GET  'http://127.0.0.1:8080/api/6/http/upstreams/applicationServers/servers'
+#curl -X POST -d '{ "server": "192.168.1.30:8091", "weight": 4, "max_fails": 5 }' -s 'http://127.0.0.1:8080/api/6/http/upstreams/applicationServers/servers'
+#curl -X DELETE  -s 'http://127.0.0.1:8080/api/6/http/upstreams/applicationServers/servers/0'
+#curl -X PATCH -d '{ "down": true }' -s 'http://127.0.0.1:8080/api/6/http/upstreams/applicationServers/servers/0'
+#curl -X PATCH -d '{ "down": false }' -s 'http://127.0.0.1:8080/api/6/http/upstreams/applicationServers/servers/0'
+#curl -X PATCH -d '{ "drain": true }' -s 'http://127.0.0.1:8080/api/6/http/upstreams/applicationServers/servers/0'
+upstream applicationServers {
+	zone applicationServers 64k;
+	state /var/lib/nginx/state/appservers.conf;
+	}
+
+server {
+	location / {
+	proxy_pass http://applicationServers;
+	status_zone applicationServers;
+	health_check;
+	}
+}

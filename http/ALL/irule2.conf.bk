@@ -1,0 +1,17 @@
+upstream pool1backend {
+	server 192.168.1.30:8090;
+	}
+
+upstream pool2backend {
+        server 192.168.1.30:8091;
+        }
+
+server {
+	listen 8095;
+	location /instance1 {
+		proxy_pass http://pool1backend/;
+        	}
+       location /instance2 {
+                proxy_pass http://pool2backend/;
+                }
+}

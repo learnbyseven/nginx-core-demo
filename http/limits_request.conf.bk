@@ -1,0 +1,17 @@
+#Limiting the no. of requests on backend servers 
+#for i in {1..9}; do curl 192.168.1.30; done
+#------------------------------------------------
+upstream backend {
+	zone backend 64k;
+	server 192.168.1.30:8095;
+	}
+server {
+	limit_req zone=one;
+	status_zone backend;
+	location / {
+		proxy_pass http://backend;
+	#return 200 "\nNginx-Plus is Running\n";
+	}
+}
+ 	
+	 
