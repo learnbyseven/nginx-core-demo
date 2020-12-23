@@ -1,0 +1,15 @@
+upstream ddosprotectedServers {
+	zone ddosprotectedServers 64k;
+	server 192.168.1.30:8095;
+	server 192.168.1.30:8096;
+	}
+
+server {
+	
+	location / {
+		limit_req zone=perIP;
+		status_zone ddosprotectedServers;
+		proxy_pass http://ddosprotectedServers;
+	}
+}
+	

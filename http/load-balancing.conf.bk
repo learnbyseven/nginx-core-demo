@@ -6,8 +6,8 @@
 upstream backend {
     
     random two least_time=last_byte;
-    server 192.168.1.30:8091; #weight=5;
-    server 192.168.1.30:8092; #weight=5;
+    server 192.168.1.30:8091 weight=5;
+    server 192.168.1.30:8092 weight=5;
     server 192.168.1.30:8093;
     server 192.168.1.30:8094;
     zone backend 64k;
