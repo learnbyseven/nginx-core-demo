@@ -1,7 +1,7 @@
 
 server {
         server_name crypto.192.168.1.19.nip.io;
-        listen 80;
+        listen 8090;
         status_zone server_7a7d59b162117e41eeaac40233e4d870;
         set $f5_gateway api-gateway;
         f5_metrics_marker gateway $f5_gateway;
