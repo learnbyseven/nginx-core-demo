@@ -1,0 +1,30 @@
+
+server {
+        server_name crypto.192.168.1.19.nip.io;
+        listen 80;
+        status_zone server_7a7d59b162117e41eeaac40233e4d870;
+        set $f5_gateway api-gateway;
+        f5_metrics_marker gateway $f5_gateway;
+        set $f5_environment production;
+        f5_metrics_marker environment $f5_environment;
+        location / {
+            error_log /dev/null;
+            access_log off;
+            set $f5_app crypto-web;
+            f5_metrics_marker app $f5_app;
+            set $f5_component crypto_web_cp;
+            f5_metrics_marker component $f5_component;
+            set $f5_published_api '';
+            f5_metrics_marker published_api $f5_published_api;
+            proxy_set_header X-Forwarded-For $remote_addr;
+            proxy_set_header Host $host;
+            proxy_set_header Connection '';
+            proxy_http_version 1.1;
+            app_protect_enable on;
+            app_protect_security_log_enable on;
+            app_protect_security_log /etc/controller-agent/configurator/auxfiles/log-default.json /var/log/app_protect/security.log;
+            app_protect_logging_str 'e:production;g:api-gateway;a:crypto-web;c:crypto_web_cp;r:$request_id;';
+            app_protect_policy_file /etc/controller-agent/configurator/auxfiles/a93babfd-b559-4557-b02c-c0410dc0c78d_waf_policy.json;
+            proxy_pass http://cryptowebwl_http_a93babfd-b559-4557-b02c-c0410dc0c78d;
+        }
+    }
